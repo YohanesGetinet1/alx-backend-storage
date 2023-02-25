@@ -63,7 +63,7 @@ def replay(func: Callable):
         print(fin)
 
 
-class Cache:
+class Cache():
     """ store an instance of the Redis
     client as a private variable named _redis"""
     def __init__(self):
