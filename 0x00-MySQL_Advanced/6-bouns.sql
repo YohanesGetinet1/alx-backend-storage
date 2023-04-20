@@ -2,15 +2,26 @@
 -- add a new correction for a student
 
 
-delimiter $$
+DROP PROCEDURE IF EXISTS AddBonus;
+DELIMITER $$
+CREATE PROCEDURE AddBonus (user_id INT, project_name VARCHAR(255), score FLOAT)
+BEGIN
+    DECLARE project_count INT DEFAULT 0;
+    DECLARE project_id INT DEFAULT 0;
 
-create procedure AddBonus(in user_id INTEGER, in project_name varchar(255), in score INTEGER)
-begin
-        insert into project(name) select project_name from DUAL
-        where not exists (select * from projects where name = project_name limit 1);
-
-        insert into corrections (user_id, project_id, score) values (user_id, (select id from projects where name = project_name), score);
-end $$
-
-delimiter ;
-
+    SELECT COUNT(id)
+        INTO project_count
+        FROM projects
+        WHERE name = project_name;
+    IF project_count = 0 THEN
+        INSERT INTO projects(name)
+            VALUES(project_name);
+    END IF;
+    SELECT id
+        INTO project_id
+        FROM projects
+        WHERE name = project_name;
+    INSERT INTO corrections(user_id, project_id, score)
+        VALUES (user_id, project_id, score);
+END $$
+DELIMITER ;
